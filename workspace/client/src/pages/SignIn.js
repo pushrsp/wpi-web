@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button } from "antd";
 
 import { useMycoilState } from "pkg/store/Mycoil_Hooks";
 import { USER } from "global/user";
