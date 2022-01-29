@@ -1,0 +1,14 @@
+{
+  "name": "wpi-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:client:dev": "cd workspace/client && yarn run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "workspaces": ["workspace/*"]
+}

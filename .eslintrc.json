@@ -1,0 +1,23 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": ["prettier"],
+    "plugins": ["prettier","babel"],
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "ecmaFeatures": {
+            "jsx": true,
+            "modules": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "rules": {
+        "require-jsdoc": "off",
+        "camelcase": "off",
+        "guard-for-in": "off",
+        "new-cap": "off"
+    }
+}
