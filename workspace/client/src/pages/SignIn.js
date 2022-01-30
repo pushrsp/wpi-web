@@ -14,9 +14,9 @@ const SignIn = () => {
 
   const onFinish = ({ username, password }) => {
     setMe({ username, password });
+    navigate("/home", { replace: true });
+    // console.log("click");
   };
-
-  console.log(me);
 
   return (
     <AuthLayout>

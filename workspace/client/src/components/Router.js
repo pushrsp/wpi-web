@@ -11,18 +11,19 @@ const Router = () => {
   return (
     <Layout style={{ width: "100%", height: "100vh" }}>
       <Routes>
-        <Route exact path="/" element={<Navigate to="/signin" />} />
+        <Route exact path="/" element={<Navigate to="/home" />} />
         <Route exact path="/signin" element={<SignIn />} />
         <Route exact path="/signup" element={<SignUp />} />
-        <Route
-          exact
-          path="/home"
-          element={
-            <PrivateRouter>
-              <Home />
-            </PrivateRouter>
-          }
-        />
+        {/*<Route*/}
+        {/*  exact*/}
+        {/*  path="/home"*/}
+        {/*  element={*/}
+        {/*    <PrivateRouter>*/}
+        {/*      <Home />*/}
+        {/*    </PrivateRouter>*/}
+        {/*  }*/}
+        {/*/>*/}
+        <Route exact path="/home" element={<Home />} />
       </Routes>
     </Layout>
   );
