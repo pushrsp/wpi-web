@@ -15,7 +15,9 @@ const Body = ({ body = [] }) => {
 
     const keys = Object.keys(collapse);
     if (keys.length > 1) {
-      return null;
+      return keys.map((v) => (
+        <ExpandTable key={v} collapse={collapse[v]} title={v} expandRecursion={expandRecursion} />
+      ));
     } else {
       return <ExpandTable collapse={collapse[keys[0]]} title={keys[0]} expandRecursion={expandRecursion} />;
     }
