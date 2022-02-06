@@ -12,6 +12,7 @@ export class UsersController {
   async createUser(@Body() data: RequestUserDto) {
     const user = (await this.usersService.createUser(data.username, data.password)) as UserDto;
 
+    console.log("HI");
     return user._id;
   }
 
