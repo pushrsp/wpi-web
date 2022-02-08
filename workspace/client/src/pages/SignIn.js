@@ -1,25 +1,56 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Form, Input, Button } from "antd";
+import { useFetch } from "use-http";
+import { toast, ToastContainer } from "react-toastify";
+import localStorage from "localStorage";
 
 import { useMycoilState } from "pkg/store/Mycoil_Hooks";
 import { USER } from "global/user";
+import { SIGN_IN, ME } from "constant/url";
+import { TOAST_CONFIG } from "constant/toast";
 
 import AuthLayout from "components/common/AuthLayout";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { post: login, loading } = useFetch(SIGN_IN);
+  const { data } = useFetch(ME, {}, []);
   const [me, setMe] = useMycoilState(USER);
 
-  const onFinish = ({ username, password }) => {
-    setMe({ username, password });
-    navigate("/home", { replace: true });
-    // console.log("click");
+  useEffect(() => {
+    (() => {
+      if (data?.statusCode !== 200) return;
+      console.log(data);
+      // const { username, role, isAccepted } = data.data;
+      // if (!isAccepted) return;
+      // console.log(username);
+    })();
+  }, [data]);
+
+  const onFinish = async ({ username, password }) => {
+    const result = await login({ username, password });
+
+    if (result.message === "success") {
+      const { token, username, role, isAccepted } = result.data;
+
+      if (isAccepted) {
+        toast.success(`안녕하세요 ${username}님`, TOAST_CONFIG);
+        localStorage.setItem("@wpi-token", token);
+        setMe({ username, role, isAccepted });
+        navigate("/home", { replace: true });
+      } else {
+        toast.info("관리자의 요청이 필요합니다.", TOAST_CONFIG);
+      }
+    } else {
+      toast.error(result.message, TOAST_CONFIG);
+    }
   };
 
   return (
     <AuthLayout>
+      <ToastContainer />
       <Form
         name="basic"
         style={{ width: "70%", height: "70%" }}
@@ -55,7 +86,7 @@ const SignIn = () => {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8 }}>
-          <Button type="primary" style={{ width: "100%" }} htmlType="submit">
+          <Button type="primary" loading={loading} style={{ width: "100%" }} htmlType="submit">
             로그인
           </Button>
         </Form.Item>

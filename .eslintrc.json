@@ -5,7 +5,7 @@
         "es2021": true
     },
     "extends": ["prettier"],
-    "plugins": ["prettier","babel"],
+    "plugins": ["prettier"],
     "parserOptions": {
         "ecmaVersion": 12,
         "ecmaFeatures": {
