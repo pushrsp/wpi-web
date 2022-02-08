@@ -5,4 +5,5 @@ export class UserDto extends RequestUserDto {
   public createdAt: Date;
   public updatedAt: Date;
   public isAccepted: boolean;
+  public role: number;
 }

@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
+import { Global } from "@nestjs/common";
 
 export type UserDocument = User & Document;
 
+@Global()
 @Schema()
 export class User {
   _id: string;

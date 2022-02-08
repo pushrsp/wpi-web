@@ -1,4 +1,15 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, UseGuards } from "@nestjs/common";
+import { DocsService } from "./docs.service";
 
-@Controller('docs')
-export class DocsController {}
+import { AuthMiddleware } from "../shared/middlewares/auth.middleware";
+
+@Controller("api/docs")
+export class DocsController {
+  constructor(private readonly docsService: DocsService) {}
+
+  @UseGuards(AuthMiddleware)
+  @Get()
+  getDocs() {
+    return "docs";
+  }
+}
