@@ -21,6 +21,7 @@ export class AuthMiddleware implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     let token = request.headers.authorization;
+    console.log(token);
     if (!token) return false;
     token = TOKEN_REGEX.exec(token).groups.token;
     request.user = await this.validateToken(token);

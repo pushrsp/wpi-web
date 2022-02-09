@@ -165,8 +165,8 @@ module.exports = function (updatedModules, renewedModules) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(4);
 const app_module_1 = __webpack_require__(5);
-const httpException_filter_1 = __webpack_require__(26);
-const success_interceptor_1 = __webpack_require__(27);
+const httpException_filter_1 = __webpack_require__(32);
+const success_interceptor_1 = __webpack_require__(33);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const port = process.env.PORT || 3099;
@@ -569,6 +569,7 @@ let AuthMiddleware = class AuthMiddleware {
     async canActivate(context) {
         const request = context.switchToHttp().getRequest();
         let token = request.headers.authorization;
+        console.log(token);
         if (!token)
             return false;
         token = TOKEN_REGEX.exec(token).groups.token;
@@ -764,12 +765,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a;
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DocsController = void 0;
 const common_1 = __webpack_require__(6);
 const docs_service_1 = __webpack_require__(25);
+const platform_express_1 = __webpack_require__(26);
 const auth_middleware_1 = __webpack_require__(17);
+const role_middleware_1 = __webpack_require__(18);
+const roles_enum_1 = __webpack_require__(19);
+const token_decorator_1 = __webpack_require__(21);
+const multer_option_1 = __webpack_require__(27);
+const request_doc_dto_1 = __webpack_require__(31);
 let DocsController = class DocsController {
     constructor(docsService) {
         this.docsService = docsService;
@@ -777,17 +787,31 @@ let DocsController = class DocsController {
     getDocs() {
         return "docs";
     }
+    async createDoc(user, file, data) {
+        return await this.docsService.createDoc(file.filename, data.title, data.version);
+    }
 };
 __decorate([
-    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DocsController.prototype, "getDocs", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware, new role_middleware_1.RoleMiddleware(roles_enum_1.Roles.ADMIN, roles_enum_1.Roles.WRITE)),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("file", multer_option_1.multerDiskOptions)),
+    __param(0, (0, token_decorator_1.Token)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, typeof (_b = typeof Express !== "undefined" && (_a = Express.Multer) !== void 0 && _a.File) === "function" ? _b : Object, typeof (_c = typeof request_doc_dto_1.RequestDocDto !== "undefined" && request_doc_dto_1.RequestDocDto) === "function" ? _c : Object]),
+    __metadata("design:returntype", Promise)
+], DocsController.prototype, "createDoc", null);
 DocsController = __decorate([
     (0, common_1.Controller)("api/docs"),
-    __metadata("design:paramtypes", [typeof (_a = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _a : Object])
+    __metadata("design:paramtypes", [typeof (_d = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _d : Object])
 ], DocsController);
 exports.DocsController = DocsController;
 
@@ -821,6 +845,14 @@ let DocsService = class DocsService {
     constructor(docModel) {
         this.docModel = docModel;
     }
+    async createDoc(fileName, title, version) {
+        if (!title || !version || !fileName)
+            throw new common_1.BadRequestException("빈 칸이 있는지 확인해주세요.");
+        const doc = await this.docModel.create({ title, fileName, version });
+        if (!docs)
+            throw new common_1.BadRequestException("빈 칸이 있는지 확인해주세요.");
+        return doc._id;
+    }
 };
 DocsService = __decorate([
     (0, common_1.Injectable)(),
@@ -832,6 +864,90 @@ exports.DocsService = DocsService;
 
 /***/ }),
 /* 26 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("@nestjs/platform-express");
+
+/***/ }),
+/* 27 */
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.multerDiskOptions = void 0;
+const multer_1 = __webpack_require__(28);
+const common_1 = __webpack_require__(6);
+const fs_1 = __webpack_require__(29);
+const path_1 = __webpack_require__(30);
+exports.multerDiskOptions = {
+    fileFilter: (request, file, callback) => {
+        if (file.mimetype.match(/\/(json)$/)) {
+            callback(null, true);
+        }
+        else {
+            callback(new common_1.BadRequestException("지원하지 않은 파일형식 입니다."), false);
+        }
+    },
+    storage: (0, multer_1.diskStorage)({
+        destination: (request, file, callback) => {
+            const uploadPath = "uploads";
+            if (!(0, fs_1.existsSync)(uploadPath)) {
+                (0, fs_1.mkdirSync)(uploadPath);
+            }
+            callback(null, uploadPath);
+        },
+        filename: (request, file, callback) => {
+            callback(null, `${Date.now()}${(0, path_1.extname)(file.originalname)}`);
+        },
+    }),
+    limits: {
+        fieldNameSize: 200,
+        filedSize: 1024 * 1024,
+        fields: 2,
+        fileSize: 16777216,
+        files: 1,
+    },
+};
+
+
+/***/ }),
+/* 28 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("multer");
+
+/***/ }),
+/* 29 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs");
+
+/***/ }),
+/* 30 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("path");
+
+/***/ }),
+/* 31 */
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.RequestDocDto = void 0;
+class RequestDocDto {
+}
+exports.RequestDocDto = RequestDocDto;
+
+
+/***/ }),
+/* 32 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -861,7 +977,7 @@ exports.HttpExceptionFilter = HttpExceptionFilter;
 
 
 /***/ }),
-/* 27 */
+/* 33 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -875,7 +991,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SuccessInterceptor = void 0;
 const common_1 = __webpack_require__(6);
-const rxjs_1 = __webpack_require__(28);
+const rxjs_1 = __webpack_require__(34);
 let SuccessInterceptor = class SuccessInterceptor {
     intercept(context, next) {
         const response = context.switchToHttp().getResponse();
@@ -891,7 +1007,7 @@ exports.SuccessInterceptor = SuccessInterceptor;
 
 
 /***/ }),
-/* 28 */
+/* 34 */
 /***/ ((module) => {
 
 "use strict";
@@ -959,7 +1075,7 @@ module.exports = require("rxjs");
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("8212edb950f2aefbce94")
+/******/ 		__webpack_require__.h = () => ("8b5b0fe456409f441432")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

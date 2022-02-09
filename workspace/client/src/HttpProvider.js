@@ -17,7 +17,7 @@ const HttpProvider = ({ children }) => {
         interceptors: {
           request({ options }) {
             token.current = token.current || localStorage.getItem("@wpi-token");
-            // options.headers.authorization = `Bearer ${token.current}`;
+            options.headers.authorization = `Bearer ${token.current}`;
 
             return options;
           },
