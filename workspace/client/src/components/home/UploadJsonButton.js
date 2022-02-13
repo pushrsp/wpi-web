@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Modal, Button } from "antd";
 import { toast } from "react-toastify";
 import { useFetch } from "use-http";
-import { useNavigate } from "react-router-dom";
 import { FileUploader } from "react-drag-drop-files";
 import { Input } from "antd";
 
@@ -11,7 +10,6 @@ import { TOAST_CONFIG } from "constant/toast";
 
 const UploadJsonButton = () => {
   const { post } = useFetch(CREATE_DOC);
-  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState(null);
@@ -34,7 +32,7 @@ const UploadJsonButton = () => {
     if (result.message === "success") {
       onCancel();
       toast.success("등록이 완료 되었습니다.", TOAST_CONFIG);
-      navigate("/");
+      window.location.replace("/");
     } else {
       toast.error(result.message, TOAST_CONFIG);
     }

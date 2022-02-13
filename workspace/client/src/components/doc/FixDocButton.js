@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal, Input } from "antd";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { useFetch } from "use-http";
 
 import { TOAST_CONFIG } from "constant/toast";
@@ -11,7 +10,6 @@ import If from "components/common/If";
 
 const FixDocButton = ({ info }) => {
   const { patch } = useFetch(UPDATE_DOC);
-  const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(info?.title || "");
@@ -33,7 +31,7 @@ const FixDocButton = ({ info }) => {
     if (result?.data === "ok") {
       onCancel();
       toast.success("수정이 완료되었습니다.", TOAST_CONFIG);
-      navigate("/");
+      window.location.replace("/");
     } else {
       toast.error(result.error, TOAST_CONFIG);
     }
