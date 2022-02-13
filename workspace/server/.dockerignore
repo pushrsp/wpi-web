@@ -1,8 +1,6 @@
 node_modules
 .idea
-*.iml
-wpi.json
-test
 dist
+test
 uploads
-build
+*.iml

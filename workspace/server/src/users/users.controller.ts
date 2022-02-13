@@ -1,14 +1,12 @@
 import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
 
 import { AuthMiddleware } from "../shared/middlewares/auth.middleware";
-import { RoleMiddleware } from "../shared/middlewares/role.middleware";
-import { Roles } from "../shared/enum/roles.enum";
 import { RequestUserDto } from "./dto/request.user.dto";
 import { UsersService } from "./users.service";
 import { UserDto } from "../shared/dto/user.dto";
 import { Token } from "../shared/decorators/token.decorator";
 
-@Controller("api/users")
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -20,21 +18,13 @@ export class UsersController {
   }
 
   @UseGuards(AuthMiddleware)
-  @Get("me")
+  @Get("/me")
   async getMe(@Token() user) {
-    console.log("HIHIHIHI");
-    return { username: user.username, role: user.role, isAccepted: user.isAccepted };
+    return { username: user.username };
   }
 
   @Post("login")
   async login(@Body() data: RequestUserDto) {
-    console.log("HIHIHIHI");
     return await this.usersService.loginUser(data.username, data.password);
-  }
-
-  @UseGuards(AuthMiddleware, new RoleMiddleware(Roles.ADMIN))
-  @Get()
-  async getAllUsersExceptAdmin() {
-    return await this.usersService.findAllUsersExceptAdmin();
   }
 }

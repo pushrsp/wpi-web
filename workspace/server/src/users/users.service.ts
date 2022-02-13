@@ -32,19 +32,11 @@ export class UsersService {
         {
           _id: user._id,
           username: user.username,
-          role: user.role,
-          isAccepted: user.isAccepted,
         },
         process.env.TOKEN,
         { expiresIn: "7d" },
       ),
       username: user.username,
-      role: user.role,
-      isAccepted: user.isAccepted,
     };
-  }
-
-  async findAllUsersExceptAdmin() {
-    return await this.userModel.find({ role: { $ne: 3 } });
   }
 }

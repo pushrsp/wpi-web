@@ -9,10 +9,11 @@ declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 3099;
 
+  const port = process.env.PORT || 3099;
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
+
   app.useGlobalInterceptors(new SuccessInterceptor());
 
   if (module.hot) {

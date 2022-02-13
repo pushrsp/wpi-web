@@ -29,7 +29,9 @@ const UploadJsonButton = () => {
 
     const result = await post(formData);
 
-    console.log(result);
+    if (result.message === "success") {
+      onCancel();
+    }
   };
 
   const onCancel = () => {
@@ -38,8 +40,8 @@ const UploadJsonButton = () => {
   };
 
   return (
-    <div>
-      <Button type="primary" onClick={() => setOpen((prev) => !prev)}>
+    <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", paddingRight: 30 }}>
+      <Button type="primary" onClick={() => setOpen(true)}>
         파일 등록
       </Button>
       <Modal visible={open} onOk={onOk} title="파일 업로드" onCancel={onCancel}>

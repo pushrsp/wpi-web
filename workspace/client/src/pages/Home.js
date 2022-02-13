@@ -1,16 +1,11 @@
 import React from "react";
-import { Layout, Collapse, Typography } from "antd";
-import wpi from "test/wpi.json";
+import { Layout, Typography } from "antd";
+import { Outlet } from "react-router-dom";
 
-import Description from "components/doc/Description";
-import Body from "components/doc/Body";
+import SideBar from "components/home/SideBar";
 
-import UploadJsonButton from "components/home/UploadJsonButton";
-import NotifWithBadge from "components/home/NotifWithBadge";
-
-const { Header, Content } = Layout;
-const { Panel } = Collapse;
-const { Text } = Typography;
+const { Content, Header } = Layout;
+const { Title } = Typography;
 
 const Home = () => {
   return (
@@ -25,19 +20,16 @@ const Home = () => {
             alignItems: "center",
           }}
         >
-          <UploadJsonButton />
-          <NotifWithBadge />
+          <span style={{ fontSize: 30 }}>WPI-WEB</span>
         </div>
       </Header>
-      <Content style={{ display: "flex", justifyContent: "center" }}>
-        <Collapse expandIconPosition={"left"} style={{ width: "70%" }}>
-          {wpi.map((v) => (
-            <Panel key={v.route} header={v.route} extra={<Text strong>{v.method}</Text>}>
-              <Description description={v.description} />
-              <Body body={v.body} />
-            </Panel>
-          ))}
-        </Collapse>
+      <Content style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ width: "12%", height: "100%" }}>
+          <SideBar />
+        </div>
+        <div style={{ width: "80%", height: "100%", overflowY: "auto" }}>
+          <Outlet />
+        </div>
       </Content>
     </Layout>
   );

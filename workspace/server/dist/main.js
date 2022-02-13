@@ -165,8 +165,8 @@ module.exports = function (updatedModules, renewedModules) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __webpack_require__(4);
 const app_module_1 = __webpack_require__(5);
-const httpException_filter_1 = __webpack_require__(32);
-const success_interceptor_1 = __webpack_require__(33);
+const httpException_filter_1 = __webpack_require__(30);
+const success_interceptor_1 = __webpack_require__(31);
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const port = process.env.PORT || 3099;
@@ -208,7 +208,7 @@ const common_1 = __webpack_require__(6);
 const mongoose_1 = __webpack_require__(7);
 const config_1 = __webpack_require__(8);
 const users_module_1 = __webpack_require__(9);
-const docs_module_1 = __webpack_require__(22);
+const docs_module_1 = __webpack_require__(20);
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -320,7 +320,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UserSchema = exports.User = void 0;
 const mongoose_1 = __webpack_require__(7);
@@ -336,21 +336,9 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true, type: Number, enum: [3, 2, 1] }),
-    __metadata("design:type", Number)
-], User.prototype, "role", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ required: true, default: false }),
-    __metadata("design:type", Boolean)
-], User.prototype, "isAccepted", void 0);
-__decorate([
     (0, mongoose_1.Prop)({ type: Date, default: Date.now }),
     __metadata("design:type", typeof (_a = typeof Date !== "undefined" && Date) === "function" ? _a : Object)
 ], User.prototype, "createdAt", void 0);
-__decorate([
-    (0, mongoose_1.Prop)({ type: Date }),
-    __metadata("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
-], User.prototype, "updatedAt", void 0);
 User = __decorate([
     (0, common_1.Global)(),
     (0, mongoose_1.Schema)()
@@ -410,16 +398,9 @@ let UsersService = class UsersService {
             token: (0, jsonwebtoken_1.sign)({
                 _id: user._id,
                 username: user.username,
-                role: user.role,
-                isAccepted: user.isAccepted,
             }, process.env.TOKEN, { expiresIn: "7d" }),
             username: user.username,
-            role: user.role,
-            isAccepted: user.isAccepted,
         };
-    }
-    async findAllUsersExceptAdmin() {
-        return await this.userModel.find({ role: { $ne: 3 } });
     }
 };
 UsersService = __decorate([
@@ -474,11 +455,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.UsersController = void 0;
 const common_1 = __webpack_require__(6);
 const auth_middleware_1 = __webpack_require__(17);
-const role_middleware_1 = __webpack_require__(18);
-const roles_enum_1 = __webpack_require__(19);
-const request_user_dto_1 = __webpack_require__(20);
+const request_user_dto_1 = __webpack_require__(18);
 const users_service_1 = __webpack_require__(12);
-const token_decorator_1 = __webpack_require__(21);
+const token_decorator_1 = __webpack_require__(19);
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -488,15 +467,10 @@ let UsersController = class UsersController {
         return user._id;
     }
     async getMe(user) {
-        console.log("HIHIHIHI");
-        return { username: user.username, role: user.role, isAccepted: user.isAccepted };
+        return { username: user.username };
     }
     async login(data) {
-        console.log("HIHIHIHI");
         return await this.usersService.loginUser(data.username, data.password);
-    }
-    async getAllUsersExceptAdmin() {
-        return await this.usersService.findAllUsersExceptAdmin();
     }
 };
 __decorate([
@@ -508,7 +482,7 @@ __decorate([
 ], UsersController.prototype, "createUser", null);
 __decorate([
     (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
-    (0, common_1.Get)("me"),
+    (0, common_1.Get)("/me"),
     __param(0, (0, token_decorator_1.Token)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -521,13 +495,6 @@ __decorate([
     __metadata("design:paramtypes", [typeof (_b = typeof request_user_dto_1.RequestUserDto !== "undefined" && request_user_dto_1.RequestUserDto) === "function" ? _b : Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "login", null);
-__decorate([
-    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware, new role_middleware_1.RoleMiddleware(roles_enum_1.Roles.ADMIN)),
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "getAllUsersExceptAdmin", null);
 UsersController = __decorate([
     (0, common_1.Controller)("api/users"),
     __metadata("design:paramtypes", [typeof (_c = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _c : Object])
@@ -569,7 +536,6 @@ let AuthMiddleware = class AuthMiddleware {
     async canActivate(context) {
         const request = context.switchToHttp().getRequest();
         let token = request.headers.authorization;
-        console.log(token);
         if (!token)
             return false;
         token = TOKEN_REGEX.exec(token).groups.token;
@@ -604,46 +570,6 @@ exports.AuthMiddleware = AuthMiddleware;
 
 /***/ }),
 /* 18 */
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.RoleMiddleware = void 0;
-const common_1 = __webpack_require__(6);
-class RoleMiddleware {
-    constructor(...roles) {
-        this.roles = roles;
-    }
-    canActivate(context) {
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
-        if (!this.roles.includes(user.role))
-            throw new common_1.ForbiddenException("접근할 수 없는 페이지 입니다.");
-        return true;
-    }
-}
-exports.RoleMiddleware = RoleMiddleware;
-
-
-/***/ }),
-/* 19 */
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.Roles = void 0;
-var Roles;
-(function (Roles) {
-    Roles[Roles["ADMIN"] = 3] = "ADMIN";
-    Roles[Roles["WRITE"] = 2] = "WRITE";
-    Roles[Roles["READ"] = 1] = "READ";
-})(Roles = exports.Roles || (exports.Roles = {}));
-
-
-/***/ }),
-/* 20 */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -656,7 +582,7 @@ exports.RequestUserDto = RequestUserDto;
 
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -671,7 +597,7 @@ exports.Token = (0, common_1.createParamDecorator)((data, ctx) => {
 
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -686,10 +612,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DocsModule = void 0;
 const common_1 = __webpack_require__(6);
 const mongoose_1 = __webpack_require__(7);
-const doc_schema_1 = __webpack_require__(23);
+const doc_schema_1 = __webpack_require__(21);
 const common_module_1 = __webpack_require__(10);
-const docs_controller_1 = __webpack_require__(24);
-const docs_service_1 = __webpack_require__(25);
+const docs_controller_1 = __webpack_require__(22);
+const docs_service_1 = __webpack_require__(23);
 let DocsModule = class DocsModule {
 };
 DocsModule = __decorate([
@@ -703,7 +629,7 @@ exports.DocsModule = DocsModule;
 
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -751,7 +677,7 @@ exports.DocSchema = mongoose_1.SchemaFactory.createForClass(Doc);
 
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -768,27 +694,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DocsController = void 0;
 const common_1 = __webpack_require__(6);
-const docs_service_1 = __webpack_require__(25);
-const platform_express_1 = __webpack_require__(26);
+const docs_service_1 = __webpack_require__(23);
+const platform_express_1 = __webpack_require__(25);
 const auth_middleware_1 = __webpack_require__(17);
-const role_middleware_1 = __webpack_require__(18);
-const roles_enum_1 = __webpack_require__(19);
-const token_decorator_1 = __webpack_require__(21);
-const multer_option_1 = __webpack_require__(27);
-const request_doc_dto_1 = __webpack_require__(31);
+const token_decorator_1 = __webpack_require__(19);
+const multer_option_1 = __webpack_require__(26);
+const request_doc_dto_1 = __webpack_require__(29);
 let DocsController = class DocsController {
     constructor(docsService) {
         this.docsService = docsService;
     }
-    getDocs() {
-        return "docs";
+    async getDocs() {
+        return await this.docsService.getDocs();
+    }
+    async getTheDoc(params) {
+        return await this.docsService.getTheDoc(params._id);
     }
     async createDoc(user, file, data) {
         return await this.docsService.createDoc(file.filename, data.title, data.version);
+    }
+    async updateTheDoc(data) {
+        return await this.docsService.updateTheDoc(data._id, data.title, data.version);
     }
 };
 __decorate([
@@ -796,11 +726,19 @@ __decorate([
     (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], DocsController.prototype, "getDocs", null);
 __decorate([
+    (0, common_1.Get)(":_id"),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
+    __param(0, (0, common_1.Param)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DocsController.prototype, "getTheDoc", null);
+__decorate([
     (0, common_1.Post)(),
-    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware, new role_middleware_1.RoleMiddleware(roles_enum_1.Roles.ADMIN, roles_enum_1.Roles.WRITE)),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("file", multer_option_1.multerDiskOptions)),
     __param(0, (0, token_decorator_1.Token)()),
     __param(1, (0, common_1.UploadedFile)()),
@@ -809,15 +747,23 @@ __decorate([
     __metadata("design:paramtypes", [Object, typeof (_b = typeof Express !== "undefined" && (_a = Express.Multer) !== void 0 && _a.File) === "function" ? _b : Object, typeof (_c = typeof request_doc_dto_1.RequestDocDto !== "undefined" && request_doc_dto_1.RequestDocDto) === "function" ? _c : Object]),
     __metadata("design:returntype", Promise)
 ], DocsController.prototype, "createDoc", null);
+__decorate([
+    (0, common_1.Patch)(),
+    (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_d = typeof request_doc_dto_1.RequestDocDto !== "undefined" && request_doc_dto_1.RequestDocDto) === "function" ? _d : Object]),
+    __metadata("design:returntype", Promise)
+], DocsController.prototype, "updateTheDoc", null);
 DocsController = __decorate([
     (0, common_1.Controller)("api/docs"),
-    __metadata("design:paramtypes", [typeof (_d = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _d : Object])
+    __metadata("design:paramtypes", [typeof (_e = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _e : Object])
 ], DocsController);
 exports.DocsController = DocsController;
 
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -840,18 +786,34 @@ exports.DocsService = void 0;
 const common_1 = __webpack_require__(6);
 const mongoose_1 = __webpack_require__(7);
 const mongoose_2 = __webpack_require__(13);
-const doc_schema_1 = __webpack_require__(23);
+const fs = __webpack_require__(24);
+const doc_schema_1 = __webpack_require__(21);
 let DocsService = class DocsService {
     constructor(docModel) {
         this.docModel = docModel;
+    }
+    async getDocs() {
+        return await this.docModel.find();
+    }
+    async getTheDoc(_id) {
+        const doc = await this.docModel.findOne({ _id });
+        if (!doc)
+            throw new common_1.BadRequestException("파일이 존재하지 않습니다.");
+        const file = fs.readFileSync(`${process.cwd()}/uploads/${doc.fileName}`);
+        return { wpi: JSON.parse(file.toString()), info: doc };
     }
     async createDoc(fileName, title, version) {
         if (!title || !version || !fileName)
             throw new common_1.BadRequestException("빈 칸이 있는지 확인해주세요.");
         const doc = await this.docModel.create({ title, fileName, version });
-        if (!docs)
+        if (!doc)
             throw new common_1.BadRequestException("빈 칸이 있는지 확인해주세요.");
         return doc._id;
+    }
+    async updateTheDoc(_id, title, version) {
+        console.log(_id);
+        await this.docModel.updateOne({ _id }, { title, version, updatedAt: new Date() });
+        return "ok";
     }
 };
 DocsService = __decorate([
@@ -863,24 +825,31 @@ exports.DocsService = DocsService;
 
 
 /***/ }),
-/* 26 */
+/* 24 */
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("fs");
+
+/***/ }),
+/* 25 */
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("@nestjs/platform-express");
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.multerDiskOptions = void 0;
-const multer_1 = __webpack_require__(28);
+const multer_1 = __webpack_require__(27);
 const common_1 = __webpack_require__(6);
-const fs_1 = __webpack_require__(29);
-const path_1 = __webpack_require__(30);
+const fs_1 = __webpack_require__(24);
+const path_1 = __webpack_require__(28);
 exports.multerDiskOptions = {
     fileFilter: (request, file, callback) => {
         if (file.mimetype.match(/\/(json)$/)) {
@@ -913,28 +882,21 @@ exports.multerDiskOptions = {
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("multer");
 
 /***/ }),
-/* 29 */
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs");
-
-/***/ }),
-/* 30 */
+/* 28 */
 /***/ ((module) => {
 
 "use strict";
 module.exports = require("path");
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -947,7 +909,7 @@ exports.RequestDocDto = RequestDocDto;
 
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -977,7 +939,7 @@ exports.HttpExceptionFilter = HttpExceptionFilter;
 
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
@@ -991,7 +953,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SuccessInterceptor = void 0;
 const common_1 = __webpack_require__(6);
-const rxjs_1 = __webpack_require__(34);
+const rxjs_1 = __webpack_require__(32);
 let SuccessInterceptor = class SuccessInterceptor {
     intercept(context, next) {
         const response = context.switchToHttp().getResponse();
@@ -1007,7 +969,7 @@ exports.SuccessInterceptor = SuccessInterceptor;
 
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ ((module) => {
 
 "use strict";
@@ -1075,7 +1037,7 @@ module.exports = require("rxjs");
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("8b5b0fe456409f441432")
+/******/ 		__webpack_require__.h = () => ("18f49a5be19be7b55348")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

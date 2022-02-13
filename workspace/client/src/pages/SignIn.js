@@ -17,15 +17,14 @@ const SignIn = () => {
   const location = useLocation();
   const { post: login, loading } = useFetch(SIGN_IN);
   const { data } = useFetch(ME, {}, []);
-  const [me, setMe] = useMycoilState(USER);
+  const [_, setMe] = useMycoilState(USER);
 
   useEffect(() => {
     (() => {
-      if (data?.statusCode !== 200) return;
-      console.log(data);
-      // const { username, role, isAccepted } = data.data;
-      // if (!isAccepted) return;
-      // console.log(username);
+      if (!data || !data.data) return;
+
+      setMe({ username: data.data.username });
+      navigate("/home", { replace: true });
     })();
   }, [data]);
 
@@ -33,16 +32,12 @@ const SignIn = () => {
     const result = await login({ username, password });
 
     if (result.message === "success") {
-      const { token, username, role, isAccepted } = result.data;
+      const { token, username } = result.data;
 
-      if (isAccepted) {
-        toast.success(`안녕하세요 ${username}님`, TOAST_CONFIG);
-        localStorage.setItem("@wpi-token", token);
-        setMe({ username, role, isAccepted });
-        navigate("/home", { replace: true });
-      } else {
-        toast.info("관리자의 요청이 필요합니다.", TOAST_CONFIG);
-      }
+      toast.success(`안녕하세요 ${username}님`, TOAST_CONFIG);
+      localStorage.setItem("@wpi-token", token);
+      setMe({ username });
+      navigate("/home", { replace: true });
     } else {
       toast.error(result.message, TOAST_CONFIG);
     }

@@ -8,6 +8,9 @@ import Home from "pages/Home";
 import SignUp from "pages/SignUp";
 import SignIn from "pages/SignIn";
 
+import Doc from "components/doc";
+import HomeCmp from "components/home";
+
 const Router = () => {
   return (
     <Layout style={{ width: "100%", height: "100vh" }}>
@@ -24,8 +27,10 @@ const Router = () => {
               <Home />
             </PrivateRouter>
           }
-        />
-        {/*<Route exact path="/home" element={<Home />} />*/}
+        >
+          <Route path="" element={<HomeCmp />} />
+          <Route path=":_id" element={<Doc />} />
+        </Route>
       </Routes>
     </Layout>
   );
