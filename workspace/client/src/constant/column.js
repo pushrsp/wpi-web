@@ -1,7 +1,7 @@
 import React from "react";
 import { Tag } from "antd";
 
-export const BODY_COLUMNS = [
+export const COLUMNS = [
   {
     title: "키",
     dataIndex: "key",

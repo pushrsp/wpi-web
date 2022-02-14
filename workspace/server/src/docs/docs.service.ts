@@ -30,9 +30,8 @@ export class DocsService {
     return doc._id;
   }
 
-  async updateTheDoc(_id: string, title: string, version: string) {
-    console.log(_id);
-    await this.docModel.updateOne({ _id }, { title, version, updatedAt: new Date() });
+  async updateTheDoc(_id: string, title: string, version: string, fileName: string) {
+    await this.docModel.updateOne({ _id }, { title, version, updatedAt: new Date(), fileName });
     return "ok";
   }
 }

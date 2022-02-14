@@ -2,7 +2,7 @@ import React from "react";
 import { Table, Typography } from "antd";
 import _ from "lodash";
 
-import { BODY_COLUMNS } from "constant/column";
+import { COLUMNS } from "constant/column";
 
 const { Text } = Typography;
 
@@ -12,7 +12,7 @@ const ExpandTable = ({ collapse, expandRecursion, title }) => {
       pagination={{ defaultPageSize: 5, hideOnSinglePage: true, position: ["topRight"] }}
       size={"small"}
       bordered={true}
-      columns={BODY_COLUMNS}
+      columns={COLUMNS}
       dataSource={collapse}
       expandable={{
         expandedRowRender: (record) => expandRecursion(record.collapse),

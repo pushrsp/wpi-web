@@ -214,7 +214,7 @@ let AppModule = class AppModule {
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({ envFilePath: `.env.${process.env.NODE_ENV}` }),
+            config_1.ConfigModule.forRoot(),
             mongoose_1.MongooseModule.forRoot(`mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_URL}:${process.env.DB_PORT}`, {
                 dbName: process.env.DB_DATABASE,
             }),
@@ -496,7 +496,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "login", null);
 UsersController = __decorate([
-    (0, common_1.Controller)("api/users"),
+    (0, common_1.Controller)("users"),
     __metadata("design:paramtypes", [typeof (_c = typeof users_service_1.UsersService !== "undefined" && users_service_1.UsersService) === "function" ? _c : Object])
 ], UsersController);
 exports.UsersController = UsersController;
@@ -694,7 +694,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e;
+var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DocsController = void 0;
 const common_1 = __webpack_require__(6);
@@ -717,8 +717,8 @@ let DocsController = class DocsController {
     async createDoc(user, file, data) {
         return await this.docsService.createDoc(file.filename, data.title, data.version);
     }
-    async updateTheDoc(data) {
-        return await this.docsService.updateTheDoc(data._id, data.title, data.version);
+    async updateTheDoc(file, data, params) {
+        return await this.docsService.updateTheDoc(params._id, data.title, data.version, file.filename);
     }
 };
 __decorate([
@@ -748,16 +748,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], DocsController.prototype, "createDoc", null);
 __decorate([
-    (0, common_1.Patch)(),
+    (0, common_1.Post)(":_id"),
     (0, common_1.UseGuards)(auth_middleware_1.AuthMiddleware),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)("file", multer_option_1.multerDiskOptions)),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Param)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof request_doc_dto_1.RequestDocDto !== "undefined" && request_doc_dto_1.RequestDocDto) === "function" ? _d : Object]),
+    __metadata("design:paramtypes", [typeof (_e = typeof Express !== "undefined" && (_d = Express.Multer) !== void 0 && _d.File) === "function" ? _e : Object, typeof (_f = typeof request_doc_dto_1.RequestDocDto !== "undefined" && request_doc_dto_1.RequestDocDto) === "function" ? _f : Object, Object]),
     __metadata("design:returntype", Promise)
 ], DocsController.prototype, "updateTheDoc", null);
 DocsController = __decorate([
-    (0, common_1.Controller)("api/docs"),
-    __metadata("design:paramtypes", [typeof (_e = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _e : Object])
+    (0, common_1.Controller)("docs"),
+    __metadata("design:paramtypes", [typeof (_g = typeof docs_service_1.DocsService !== "undefined" && docs_service_1.DocsService) === "function" ? _g : Object])
 ], DocsController);
 exports.DocsController = DocsController;
 
@@ -810,9 +813,8 @@ let DocsService = class DocsService {
             throw new common_1.BadRequestException("빈 칸이 있는지 확인해주세요.");
         return doc._id;
     }
-    async updateTheDoc(_id, title, version) {
-        console.log(_id);
-        await this.docModel.updateOne({ _id }, { title, version, updatedAt: new Date() });
+    async updateTheDoc(_id, title, version, fileName) {
+        await this.docModel.updateOne({ _id }, { title, version, updatedAt: new Date(), fileName });
         return "ok";
     }
 };
@@ -1037,7 +1039,7 @@ module.exports = require("rxjs");
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("18f49a5be19be7b55348")
+/******/ 		__webpack_require__.h = () => ("4c0319c45930fd2553ce")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */

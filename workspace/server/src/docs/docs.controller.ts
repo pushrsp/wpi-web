@@ -30,9 +30,10 @@ export class DocsController {
     return await this.docsService.createDoc(file.filename, data.title, data.version);
   }
 
-  @Patch()
+  @Post(":_id")
   @UseGuards(AuthMiddleware)
-  async updateTheDoc(@Body() data: RequestDocDto) {
-    return await this.docsService.updateTheDoc(data._id, data.title, data.version);
+  @UseInterceptors(FileInterceptor("file", multerDiskOptions))
+  async updateTheDoc(@UploadedFile() file: Express.Multer.File, @Body() data: RequestDocDto, @Param() params) {
+    return await this.docsService.updateTheDoc(params._id, data.title, data.version, file.filename);
   }
 }
