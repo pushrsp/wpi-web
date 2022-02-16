@@ -1,5 +1,4 @@
-// export const SERVER = "/api";
-export const SERVER = "http://localhost:3098";
+export const SERVER = "/api";
 
 export const SIGN_UP = "/users";
 export const SIGN_IN = "/users/login";
