@@ -1,0 +1,46 @@
+version: '3'
+services:
+  client:
+    stdin_open: true
+    restart: 'on-failure'
+    build:
+      context: ./workspace/client
+      dockerfile: Dockerfile-dev
+    volumes:
+      - /usr/app/node_modules
+      - ./workspace/client:/usr/app
+  mongodb:
+    image: mongo:latest
+    restart: 'always'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=pushrsp
+      - MONGO_INITDB_ROOT_PASSWORD=pushrsp
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  api:
+    build:
+      context: ./workspace/server
+      dockerfile: Dockerfile-dev
+    environment:
+      - DB_USERNAME=pushrsp
+      - DB_PASSWORD=pushrsp
+      - DB_DATABASE=WPI_DOC
+      - DB_URL=mongodb
+      - DB_PORT=27017
+      - PORT=3098
+      - TOKEN=pushrsp
+    volumes:
+      - /usr/app/node_modules
+      - ./workspace/server:/usr/app
+  nginx:
+    restart: 'always'
+    depends_on:
+      - api
+      - client
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '3050:80'
