@@ -1,0 +1,401 @@
+[
+  {
+    "route": "/docs",
+    "method": "GET",
+    "description": "다큐먼트 가져오기",
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "doc",
+        "key": "data",
+        "explain": "다큐먼트 정보",
+        "collapse": {
+          "data": [
+            {
+              "key": "title",
+              "type": "string",
+              "explain": "제목",
+              "collapse": {}
+            },
+            {
+              "key": "version",
+              "type": "string",
+              "explain": "버젼",
+              "collapse": {}
+            },
+            {
+              "key": "fileName",
+              "type": "string",
+              "explain": "파일 이르",
+              "collapse": {}
+            },
+            {
+              "key": "createdAt",
+              "type": "date",
+              "explain": "생성 날짜",
+              "collapse": {}
+            },
+            {
+              "key": "updatedAt",
+              "type": "date",
+              "explain": "수정 날짜",
+              "collapse": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "route": "/docs/:_id",
+    "method": "GET",
+    "description": "특정 다큐먼트 가져오기",
+    "param": [
+      {
+        "key": "_id",
+        "type": "string",
+        "explain": "다큐먼크 UID",
+        "collapse": {}
+      }
+    ],
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "doc",
+        "key": "data",
+        "explain": "다큐먼트 정보",
+        "collapse": {
+          "data": [
+            {
+              "key": "title",
+              "type": "string",
+              "explain": "제목",
+              "collapse": {}
+            },
+            {
+              "key": "version",
+              "type": "string",
+              "explain": "버젼",
+              "collapse": {}
+            },
+            {
+              "key": "fileName",
+              "type": "string",
+              "explain": "파일 이르",
+              "collapse": {}
+            },
+            {
+              "key": "createdAt",
+              "type": "date",
+              "explain": "생성 날짜",
+              "collapse": {}
+            },
+            {
+              "key": "updatedAt",
+              "type": "date",
+              "explain": "수정 날짜",
+              "collapse": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "route": "/docs",
+    "method": "POST",
+    "description": "다큐먼트 생성",
+    "param": [
+      {
+        "key": "_id",
+        "type": "string",
+        "explain": "다큐먼크 UID",
+        "collapse": {}
+      }
+    ],
+    "body": [
+      {
+        "key": "title",
+        "type": "string",
+        "explain": "제목",
+        "collapse": {}
+      },
+      {
+        "key": "version",
+        "type": "string",
+        "explain": "버젼",
+        "collapse": {}
+      },
+      {
+        "key": "file",
+        "type": "formData",
+        "explain": "파일",
+        "collapse": {}
+      }
+    ],
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "data",
+        "explain": "다큐먼트 UID",
+        "collapse": {}
+      }
+    ]
+  },
+  {
+    "route": "/docs/:_id",
+    "method": "POST",
+    "description": "특정 다큐먼트 수정",
+    "param": [
+      {
+        "key": "_id",
+        "type": "string",
+        "explain": "다큐먼크 UID",
+        "collapse": {}
+      }
+    ],
+    "body": [
+      {
+        "key": "title",
+        "type": "string",
+        "explain": "제목",
+        "collapse": {}
+      },
+      {
+        "key": "version",
+        "type": "string",
+        "explain": "버젼",
+        "collapse": {}
+      },
+      {
+        "key": "file",
+        "type": "formData",
+        "explain": "파일",
+        "collapse": {}
+      }
+    ],
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "data",
+        "explain": "'ok'",
+        "collapse": {}
+      }
+    ]
+  },
+  {
+    "route": "/users",
+    "method": "POST",
+    "description": "회원가입",
+    "body": [
+      {
+        "key": "username",
+        "type": "string",
+        "explain": "아이디",
+        "collapse": {}
+      },
+      {
+        "key": "password",
+        "type": "string",
+        "explain": "비밀번호",
+        "collapse": {}
+      }
+    ],
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "data",
+        "explain": "유저 UID",
+        "collapse": {}
+      }
+    ]
+  },
+  {
+    "route": "/users/me",
+    "method": "GET",
+    "description": "내 정보 불러오기",
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "meUser",
+        "key": "data",
+        "explain": "유저정보",
+        "collapse": {
+          "data": [
+            {
+              "key": "username",
+              "type": "string",
+              "explain": "유저네임",
+              "collapse": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "route": "/users/login",
+    "method": "POST",
+    "description": "로그인",
+    "body": [
+      {
+        "key": "username",
+        "type": "string",
+        "explain": "아이디",
+        "collapse": {}
+      },
+      {
+        "key": "password",
+        "type": "string",
+        "explain": "비밀번호",
+        "collapse": {}
+      }
+    ],
+    "success": [
+      {
+        "type": "string",
+        "key": "message",
+        "explain": "'success'",
+        "collapse": {}
+      },
+      {
+        "type": "int",
+        "key": "statusCode",
+        "explain": "성공 코드",
+        "collapse": {}
+      },
+      {
+        "type": "string",
+        "key": "error",
+        "explain": "'null'",
+        "collapse": {}
+      },
+      {
+        "type": "loginUser",
+        "key": "data",
+        "explain": "유저정보",
+        "collapse": {
+          "data": [
+            {
+              "key": "token",
+              "type": "string",
+              "explain": "jwt 토큰",
+              "collapse": {}
+            },
+            {
+              "key": "username",
+              "type": "string",
+              "explain": "유저네임",
+              "collapse": {}
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

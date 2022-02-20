@@ -69,7 +69,7 @@ const Doc = () => {
       <Collapse expandIconPosition={"left"} style={{ width: "100%" }}>
         {wpi.map((v) => {
           return (
-            <Panel key={v.route} header={v.route} extra={<Text strong>{v.method}</Text>}>
+            <Panel key={`${v.route}${v.method}`} header={v.route} extra={<Text strong>{v.method}</Text>}>
               <Description description={v.description} />
               <Element data={v.param} header="Param" />
               <Element data={v.query} header="Query" />
