@@ -71,6 +71,8 @@ const Doc = () => {
           return (
             <Panel key={v.route} header={v.route} extra={<Text strong>{v.method}</Text>}>
               <Description description={v.description} />
+              <Element data={v.param} header="Param" />
+              <Element data={v.query} header="Query" />
               <Element data={v.body} header="Body" />
               <Element data={v.success} header="Success" />
               <Element data={v.fail} header="Fail" />
